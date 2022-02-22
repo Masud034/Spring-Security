@@ -1,6 +1,6 @@
 package com.example.springsecurity.services;
 
-import com.example.springsecurity.entities.User;
+import com.example.springsecurity.entities.UserEntity;
 import com.example.springsecurity.model.UserRequestModel;
 import com.example.springsecurity.repositories.UserRepository;
 import org.springframework.beans.BeanUtils;
@@ -22,20 +22,26 @@ public class UserService implements UserDetailsService {
     @Autowired
     private UserRepository userRepository;
 
-    public User addUser (UserRequestModel userRequest) {
-        User user = new User();
+    public UserEntity addUser (UserRequestModel userRequest) {
+        UserEntity userEntity = new UserEntity();
 
-        BeanUtils.copyProperties(userRequest, user);
-        user.setEncryptedPassword(passwordEncoder.encode(userRequest.getRawPassword()));
+        BeanUtils.copyProperties(userRequest, userEntity);
+        userEntity.setEncryptedPassword(passwordEncoder.encode(userRequest.getRawPassword()));
 
-        return userRepository.save(user);
+        return userRepository.save(userEntity);
+    }
+
+    public UserEntity getUserByUserName(String userName) {
+        return userRepository.findByEmail(userName);
     }
 
     @Override
     public UserDetails loadUserByUsername(String email) throws UsernameNotFoundException {
-        User user = userRepository.findByEmail(email);
-        if(user == null) throw new UsernameNotFoundException(email);
-        System.out.println(user);
-        return new org.springframework.security.core.userdetails.User(user.getEmail(), user.getEncryptedPassword(), new ArrayList<>());
+        UserEntity userEntity = userRepository.findByEmail(email);
+        if(userEntity == null) throw new UsernameNotFoundException(email);
+        System.out.println(userEntity);
+        return new org.springframework.security.core.userdetails.User(userEntity.getEmail(), userEntity.getEncryptedPassword(), new ArrayList<>());
     }
+
+
 }

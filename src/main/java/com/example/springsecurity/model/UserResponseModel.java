@@ -1,16 +1,15 @@
 package com.example.springsecurity.model;
 
-import lombok.*;
+import lombok.Getter;
+import lombok.Setter;
 
 import java.util.UUID;
 
-@AllArgsConstructor
-@NoArgsConstructor
-@ToString
-@EqualsAndHashCode
 @Getter
 @Setter
-public class UserRequestModel {
+public class UserResponseModel {
+
+    private UUID id;
 
     private String userId;
 
@@ -19,6 +18,4 @@ public class UserRequestModel {
     private String lastName;
 
     private String email;
-
-    private String rawPassword;
 }

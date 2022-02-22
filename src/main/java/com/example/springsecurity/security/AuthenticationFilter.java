@@ -1,9 +1,14 @@
 package com.example.springsecurity.security;
 
+import com.example.springsecurity.context.SpringApplicationContext;
+import com.example.springsecurity.entities.UserEntity;
 import com.example.springsecurity.model.UserLoginRequestModel;
+import com.example.springsecurity.model.UserResponseModel;
+import com.example.springsecurity.services.UserService;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
+import org.springframework.beans.BeanUtils;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
@@ -47,8 +52,15 @@ public class AuthenticationFilter extends UsernamePasswordAuthenticationFilter {
 
         String token = Jwts.builder()
                 .setSubject(userName)
-                .setExpiration(new Date(System.currentTimeMillis() + 8640000))
-                .signWith(SignatureAlgorithm.HS512, "jhg98dfd").compact();
-        response.addHeader("Authorization", "BEARER " + token);
+                .setExpiration(new Date(System.currentTimeMillis() + SecurityConstants.EXPIRATION_TIME))
+                .signWith(SignatureAlgorithm.HS512, SecurityConstants.TOKEN_SECRET).compact();
+
+        UserService userService = (UserService) SpringApplicationContext.getBean("userService");
+        UserEntity userEntity = userService.getUserByUserName(userName);
+        UserResponseModel userResponseModel = new UserResponseModel();
+        BeanUtils.copyProperties(userEntity, userResponseModel);
+
+        response.addHeader(SecurityConstants.HEADER_STRING, SecurityConstants.TOKEN_PREFIX + token);
+        response.addHeader("userId", String.valueOf(userResponseModel.getId()));
     }
 }
