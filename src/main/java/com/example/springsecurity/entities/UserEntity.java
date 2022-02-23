@@ -2,9 +2,8 @@ package com.example.springsecurity.entities;
 
 import lombok.*;
 
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.Id;
+import javax.persistence.*;
+import java.util.Collection;
 import java.util.UUID;
 
 @AllArgsConstructor
@@ -14,6 +13,7 @@ import java.util.UUID;
 @Getter
 @Setter
 @Entity
+@Table(name="users")
 public class UserEntity {
 
     @Id
@@ -29,4 +29,9 @@ public class UserEntity {
     private String email;
 
     private String encryptedPassword;
+
+    @ManyToMany(cascade= { CascadeType.PERSIST }, fetch = FetchType.EAGER )
+    @JoinTable(name="users_roles",
+            joinColumns=@JoinColumn(name="users_id",referencedColumnName="id"))
+    private Collection<RolesEntity> roles;
 }
