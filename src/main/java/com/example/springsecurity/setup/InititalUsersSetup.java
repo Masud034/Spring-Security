@@ -69,7 +69,7 @@ public class InititalUsersSetup {
     }
 
 
-    private RolesEntity createRole(String name, Collection<AuthorityEntity> authorities) {00
+    private RolesEntity createRole(String name, Collection<AuthorityEntity> authorities) {
 
         RolesEntity role = roleRepository.findByName(name);
         if (role == null) {

@@ -3,6 +3,7 @@ package com.example.springsecurity.services;
 import com.example.springsecurity.entities.UserEntity;
 import com.example.springsecurity.model.UserRequestModel;
 import com.example.springsecurity.repositories.UserRepository;
+import com.example.springsecurity.security.UserPrincipal;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -39,8 +40,8 @@ public class UserService implements UserDetailsService {
     public UserDetails loadUserByUsername(String email) throws UsernameNotFoundException {
         UserEntity userEntity = userRepository.findByEmail(email);
         if(userEntity == null) throw new UsernameNotFoundException(email);
-        System.out.println(userEntity);
-        return new org.springframework.security.core.userdetails.User(userEntity.getEmail(), userEntity.getEncryptedPassword(), new ArrayList<>());
+
+        return new UserPrincipal(userEntity);
     }
 
 
