@@ -2,6 +2,8 @@ package com.example.springsecurity.services;
 
 import com.example.springsecurity.entities.UserEntity;
 import com.example.springsecurity.model.UserRequestModel;
+import com.example.springsecurity.model.UserResponseModel;
+import com.example.springsecurity.repositories.RoleRepository;
 import com.example.springsecurity.repositories.UserRepository;
 import com.example.springsecurity.security.UserPrincipal;
 import org.springframework.beans.BeanUtils;
@@ -13,6 +15,8 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 
 @Service
 public class UserService implements UserDetailsService {
@@ -23,13 +27,21 @@ public class UserService implements UserDetailsService {
     @Autowired
     private UserRepository userRepository;
 
-    public UserEntity addUser (UserRequestModel userRequest) {
+    @Autowired
+    private RoleRepository roleRepository;
+
+    public UserResponseModel addUser (UserRequestModel userRequest) {
         UserEntity userEntity = new UserEntity();
 
         BeanUtils.copyProperties(userRequest, userEntity);
         userEntity.setEncryptedPassword(passwordEncoder.encode(userRequest.getRawPassword()));
+        userEntity.setRoles(List.of(roleRepository.findByName("ROLE_USER")));
 
-        return userRepository.save(userEntity);
+        UserEntity savedUserEntity = userRepository.save(userEntity);
+        UserResponseModel userResponseModel = new UserResponseModel();
+        BeanUtils.copyProperties(savedUserEntity, userResponseModel);
+
+        return userResponseModel;
     }
 
     public UserEntity getUserByUserName(String userName) {

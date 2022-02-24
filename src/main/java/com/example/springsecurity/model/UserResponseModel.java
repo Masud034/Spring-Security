@@ -1,8 +1,10 @@
 package com.example.springsecurity.model;
 
+import com.example.springsecurity.entities.RolesEntity;
 import lombok.Getter;
 import lombok.Setter;
 
+import java.util.Collection;
 import java.util.UUID;
 
 @Getter
@@ -18,4 +20,6 @@ public class UserResponseModel {
     private String lastName;
 
     private String email;
+
+    private Collection<RolesEntity> roles;
 }

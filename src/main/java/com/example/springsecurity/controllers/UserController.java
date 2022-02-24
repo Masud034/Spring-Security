@@ -2,6 +2,7 @@ package com.example.springsecurity.controllers;
 
 import com.example.springsecurity.entities.UserEntity;
 import com.example.springsecurity.model.UserRequestModel;
+import com.example.springsecurity.model.UserResponseModel;
 import com.example.springsecurity.services.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
@@ -14,7 +15,7 @@ public class UserController {
     private UserService userService;
 
     @PostMapping(value = "/admin/add")
-    public UserEntity addUser (@RequestBody UserRequestModel userRequest) {
+    public UserResponseModel addUser (@RequestBody UserRequestModel userRequest) {
         return userService.addUser(userRequest);
     }
 
@@ -23,9 +24,9 @@ public class UserController {
         return "hell there";
     }
 
-    @DeleteMapping(value = "users")
+    @DeleteMapping(value = "/users")
     public String deleteUser() {
-        return "delete mapping called";
+        return "delete mapping called for admin";
     }
 
 

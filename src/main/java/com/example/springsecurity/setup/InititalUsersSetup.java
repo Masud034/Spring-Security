@@ -51,7 +51,7 @@ public class InititalUsersSetup {
         adminUser.setEncryptedPassword(bCryptPasswordEncoder.encode("@admin#1#"));
         adminUser.setRoles(List.of(roleAdmin));
 
-        System.out.println(userRepository.save(adminUser));
+        userRepository.save(adminUser);
 
 
     }
