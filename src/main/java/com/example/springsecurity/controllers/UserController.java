@@ -23,5 +23,10 @@ public class UserController {
         return "hell there";
     }
 
+    @DeleteMapping(value = "users")
+    public String deleteUser() {
+        return "delete mapping called";
+    }
+
 
 }

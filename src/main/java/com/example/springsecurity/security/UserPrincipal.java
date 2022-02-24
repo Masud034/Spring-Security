@@ -1,8 +1,10 @@
 package com.example.springsecurity.security;
 
 import com.example.springsecurity.entities.AuthorityEntity;
+import com.example.springsecurity.entities.RolesEntity;
 import com.example.springsecurity.entities.UserEntity;
 import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
 import java.util.Collection;
@@ -23,36 +25,50 @@ public class UserPrincipal implements UserDetails {
     public Collection<? extends GrantedAuthority> getAuthorities() {
         Collection<GrantedAuthority> authorities = new HashSet<>();
         Collection<AuthorityEntity> authorityEntities = new HashSet<>();
-        return null;
+
+        Collection<RolesEntity> roles = userEntity.getRoles();
+
+        if (roles == null ) return authorities;
+
+        roles.forEach(role -> {
+            authorities.add(new SimpleGrantedAuthority(role.getName()));
+            authorityEntities.addAll(role.getAuthorities());
+        });
+
+        authorityEntities.forEach(authorityEntity -> {
+            authorities.add(new SimpleGrantedAuthority(authorityEntity.getName()));
+        });
+        return authorities;
     }
 
     @Override
     public String getPassword() {
-        return null;
+        return this.userEntity.getEncryptedPassword();
     }
 
     @Override
     public String getUsername() {
-        return null;
+        return this.userEntity.getEmail();
     }
 
     @Override
     public boolean isAccountNonExpired() {
-        return false;
+        return true;
     }
 
     @Override
     public boolean isAccountNonLocked() {
-        return false;
+        return true;
     }
 
     @Override
     public boolean isCredentialsNonExpired() {
-        return false;
+        return true;
     }
 
+    //email verification status
     @Override
     public boolean isEnabled() {
-        return false;
+        return true;
     }
 }

@@ -1,6 +1,7 @@
 package com.example.springsecurity.security;
 
 
+import com.example.springsecurity.repositories.UserRepository;
 import com.example.springsecurity.services.UserService;
 import org.springframework.http.HttpMethod;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
@@ -17,9 +18,12 @@ public class WebSecurity extends WebSecurityConfigurerAdapter {
 
     private final UserService userDetailsService;
 
-    public WebSecurity(BCryptPasswordEncoder passwordEncoder, UserService userDetailsService) {
+    private final UserRepository userRepository;
+
+    public WebSecurity(BCryptPasswordEncoder passwordEncoder, UserService userDetailsService, UserRepository userRepository) {
         this.passwordEncoder = passwordEncoder;
         this.userDetailsService = userDetailsService;
+        this.userRepository = userRepository;
     }
 
     @Override
@@ -33,10 +37,11 @@ public class WebSecurity extends WebSecurityConfigurerAdapter {
                 .authorizeHttpRequests()
                 .antMatchers(HttpMethod.POST, SecurityConstants.SIGN_UP_URL)
                 .permitAll()
+                .antMatchers(HttpMethod.DELETE, "/users").hasRole("ADMIN")
                 .anyRequest()
                 .authenticated().and()
                 .addFilter(new AuthenticationFilter(authenticationManager()))
-                .addFilter(new AuthorizationFilter(authenticationManager()))
+                .addFilter(new AuthorizationFilter(authenticationManager(), userRepository))
                 .sessionManagement()
                 .sessionCreationPolicy(SessionCreationPolicy.STATELESS);
     }
